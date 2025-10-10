@@ -1,5 +1,12 @@
 import { eps } from '@lvlte/ulp';
-import { modf, ipart, fpart } from '@lvlte/modf';
+import { modf } from '@lvlte/modf';
+
+const Int54 = (x: number): number => {
+  if (Number.isSafeInteger(x)) {
+    return x;
+  }
+  throw RangeError(`${x} is not a safe integer`);
+};
 
 /**
  * Represent a floating point number `x` as a rational number `[p, q]` where
@@ -16,7 +23,7 @@ export function rationalize(x: number, tol: number = eps(x)): [number, number] {
   }
 
   if (Number.isInteger(x)) {
-    return [x, 1];
+    return [Int54(x), 1];
   }
 
   const sign = Math.sign(x);
@@ -29,10 +36,10 @@ export function rationalize(x: number, tol: number = eps(x)): [number, number] {
   let [pPrev, p] = [1, a];
   let [qPrev, q] = [0, 1];
 
-  while (Math.abs(x - p/q)> tol) {
+  while (Math.abs(x - p/q) > tol) {
     [a, r] = modf(1/r);
-    [pPrev, p] = [p, p*a + pPrev];
-    [qPrev, q] = [q, q*a + qPrev];
+    [pPrev, p] = [p, Int54(p*a + pPrev)];
+    [qPrev, q] = [q, Int54(q*a + qPrev)];
   }
 
   return [sign*p, q];

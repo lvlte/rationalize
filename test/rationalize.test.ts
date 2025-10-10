@@ -27,9 +27,7 @@ const X = [] as Array<[number, number]>;
 let n = 0;
 while (n++ < N) {
   const [a, b] = divgcd(randint(), randint());
-  // const [a, b] = divgcd(randint(1, 100), randint());
   X.push(a < b ? [a, b] : [b, a]);
-  // X.push([a, b]);
 }
 
 describe('rationalize(x < 1) ', () => {
@@ -38,7 +36,6 @@ describe('rationalize(x < 1) ', () => {
     const [p, q] = rationalize(x);
     const xx = p/q;
     expect(Math.abs(x - xx)).toBeLessThanOrEqual(eps(x));
-    // expect([p, q]).toStrictEqual([a, b]);
   });
 });
 
@@ -48,6 +45,5 @@ describe('rationalize(x >= 1) ', () => {
     const [p, q] = rationalize(x);
     const xx = p/q;
     expect(Math.abs(x - xx)).toBeLessThanOrEqual(eps(x));
-    // expect([p, q]).toStrictEqual([a, b]);
   });
 });
