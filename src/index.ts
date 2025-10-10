@@ -31,8 +31,9 @@ export function rationalize(x: number, tol: number = eps(x)): [number, number] {
     throw TypeError(`x must be a number (received ${typeof x})`);
   }
 
-  if (tol < 0) {
-    throw RangeError(`Tolerance cannot be negative (tol=${tol})`);
+  if (!(typeof tol === 'number' && tol >= 0)) {
+    const Err = typeof tol === 'number' ? RangeError : TypeError;
+    throw Err(`Tolerance must be a non-negative number`);
   }
 
   if (Number.isInteger(x)) {
