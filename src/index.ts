@@ -8,6 +8,10 @@ const Int54 = (x: number): number => {
   throw RangeError(`${x} is not a safe integer`);
 };
 
+const isInfinite = (x: number): x is 9e+999 | -9e+999 => {
+  return x === Infinity || x === -Infinity;
+};
+
 /**
  * Represent a floating point number `x` as a rational number `[p, q]` where
  * `p/q ≈ x` and `|x - p/q| ≤ tol` (the result will differ from x by no more
@@ -15,7 +19,16 @@ const Int54 = (x: number): number => {
  */
 export function rationalize(x: number, tol: number = eps(x)): [number, number] {
   if (!Number.isFinite(x)) {
-    throw RangeError(`x must be a finite number (x=${x})`);
+    if (Number.isNaN(x)) {
+      throw RangeError(`x must be a valid number (received NaN)`);
+    }
+    if (isInfinite(x)) {
+      // ±Infinity is not a rational number obviously but we can represent it as
+      // [±1, 0] (since float64 allows division by zero, and ±1/0 = ±Infinity),
+      // which allows to carry it on through rational computations.
+      return [Math.sign(x), 0];
+    }
+    throw TypeError(`x must be a number (received ${typeof x})`);
   }
 
   if (tol < 0) {
