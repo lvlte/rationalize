@@ -30,7 +30,7 @@ while (n++ < N) {
   X.push(a < b ? [a, b] : [b, a]);
 }
 
-describe('rationalize(x < 1) ', () => {
+describe('rationalize(x ≤ 1, tol = eps(x))', () => {
   test.each(X)('±%s, ±%s', (a: number, b: number) => {
     const x = a/b;
     const [p, q] = rationalize(x);
@@ -39,11 +39,24 @@ describe('rationalize(x < 1) ', () => {
   });
 });
 
-describe('rationalize(x >= 1) ', () => {
+describe('rationalize(x ≥ 1, tol = eps(x))', () => {
   test.each(X)('±%s, ±%s', (b: number, a: number) => {
     const x = a/b;
     const [p, q] = rationalize(x);
     const xx = p/q;
     expect(Math.abs(x - xx)).toBeLessThanOrEqual(eps(x));
+  });
+});
+
+describe('Edge cases', () => {
+  test('NaN', () => expect(() => rationalize(NaN)).toThrow(RangeError));
+  test.each(['1', null, undefined, {}, []])('%s', (x) => {
+    expect(() => rationalize(x as unknown as number)).toThrow(TypeError);
+  });
+  test('Invalid tolerance', () => {
+    expect(() => rationalize(1, -1)).toThrow(RangeError);
+    expect(() => rationalize(1, NaN)).toThrow(RangeError);
+    expect(() => rationalize(1, '1' as unknown as number)).toThrow(TypeError);
+    expect(() => rationalize(1, null as unknown as number)).toThrow(TypeError);
   });
 });

@@ -47,6 +47,7 @@
   },
   "dependencies": {
     "@lvlte/modf": "^2.0.1",
-    "@lvlte/ulp": "^1.1.0"
+    "@lvlte/ulp": "^1.1.0",
+    "double.js": "^1.1.0"
   }
 }
