@@ -1,5 +1,6 @@
 import { rationalize } from '../src/index';
 import { eps, exponent } from '@lvlte/ulp';
+import { Double } from 'double.js';
 
 function randint(min: number = 0, max: number = 1e+8): number {
   min = Math.ceil(min);
@@ -34,8 +35,8 @@ describe('rationalize(x ≤ 1, tol = eps(x))', () => {
   test.each(X)('±%s, ±%s', (a: number, b: number) => {
     const x = a/b;
     const [p, q] = rationalize(x);
-    const xx = p/q;
-    expect(Math.abs(x - xx)).toBeLessThanOrEqual(eps(x));
+    const ee = new Double(p).div(q).sub(x).abs();
+    expect(ee.le(eps(x))).toBe(true);
   });
 });
 
@@ -43,8 +44,8 @@ describe('rationalize(x ≥ 1, tol = eps(x))', () => {
   test.each(X)('±%s, ±%s', (b: number, a: number) => {
     const x = a/b;
     const [p, q] = rationalize(x);
-    const xx = p/q;
-    expect(Math.abs(x - xx)).toBeLessThanOrEqual(eps(x));
+    const ee = new Double(p).div(q).sub(x).abs();
+    expect(ee.le(eps(x))).toBe(true);
   });
 });
 
