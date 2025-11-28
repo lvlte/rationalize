@@ -1,5 +1,5 @@
 import { rationalize } from '../src/index';
-import { eps, exponent } from '@lvlte/ulp';
+import { eps } from '@lvlte/ulp';
 import { Double } from 'double.js';
 
 function randint(min: number = 0, max: number = 1e+8): number {
@@ -23,7 +23,7 @@ function divgcd(x: number, y: number): [number, number] {
   return [x/d, y/d];
 }
 
-const N = 100;
+const N = 1000;
 const X = [] as Array<[number, number]>;
 let n = 0;
 while (n++ < N) {
