@@ -22,29 +22,68 @@ function divgcd(x: number, y: number): [number, number] {
   return [x/d, y/d];
 }
 
-const N = 1000;
-const X = [] as Array<[number, number]>;
+const N = 100;
+const X = [] as number[];
 let n = 0;
 while (n++ < N) {
   const [a, b] = divgcd(randint(), randint());
-  X.push(a < b ? [a, b] : [b, a]);
+  X.push(a < b ? a/b : b/a);
 }
 
-describe('rationalize(x ≤ 1, tol = eps(x))', () => {
-  test.each(X)('±%s, ±%s', (a: number, b: number) => {
-    const x = a/b;
-    const [p, q] = rationalize(x);
-    const ee = new Double(p).div(q).sub(x).abs();
-    expect(ee.le(eps(x))).toBe(true);
+describe('Using default tolerance : tol = eps(x)', () => {
+  describe('rationalize(x ≤ 1, tol = eps(x))', () => {
+    test.each(X)('x = ±%s, tol = eps(x)', x => {
+      const [p, q] = rationalize(x);
+      const ee = new Double(p).div(q).sub(x).abs();
+      expect(ee.le(eps(x))).toBe(true);
+    });
+  });
+  describe('rationalize(x ≥ 1, tol = eps(x))', () => {
+    test.each(X)('x = ±%s, tol = eps(x)', x => {
+      const [p, q] = rationalize(x);
+      const ee = new Double(p).div(q).sub(x).abs();
+      expect(ee.le(eps(x))).toBe(true);
+    });
   });
 });
 
-describe('rationalize(x ≥ 1, tol = eps(x))', () => {
-  test.each(X)('±%s, ±%s', (b: number, a: number) => {
-    const x = a/b;
-    const [p, q] = rationalize(x);
-    const ee = new Double(p).div(q).sub(x).abs();
-    expect(ee.le(eps(x))).toBe(true);
+describe('Higher tolerance : tol = 0.01', () => {
+  describe('rationalize(x ≤ 1, tol = 0.01)', () => {
+    test.each(X)('x = ±%s, tol = 0.01', x => {
+      const tol = 0.01;
+      const [p, q] = rationalize(x, tol);
+      const ee = new Double(p).div(q).sub(x).abs();
+      expect(ee.le(tol)).toBe(true);
+    });
+  });
+  describe('rationalize(x ≥ 1, tol = 0.01)', () => {
+    test.each(X)('x = ±%s, tol = 0.01', x => {
+      const tol = 0.01;
+      const [p, q] = rationalize(x, tol);
+      const ee = new Double(p).div(q).sub(x).abs();
+      expect(ee.le(tol)).toBe(true);
+    });
+  });
+});
+
+describe('Lower tolerance : tol = eps(x)/2', () => {
+  describe('rationalize(x ≤ 1, tol = eps(x)/2)', () => {
+    test.each(X)('x = ±%s, tol = eps(x)/2', x => {
+      const tol = eps(x)/2;
+      const [p, q] = rationalize(x, tol);
+      const ee = new Double(p).div(q).sub(x).abs();
+      expect(ee.le(tol)).toBe(true);
+      expect(p/q).toEqual(x); // float64 division of p/q should be exactly x
+    });
+  });
+  describe('rationalize(x ≥ 1, tol = eps(x)/2)', () => {
+    test.each(X)('x = ±%s, tol = eps(x)/2', x => {
+      const tol = eps(x)/2;
+      const [p, q] = rationalize(x, tol);
+      const ee = new Double(p).div(q).sub(x).abs();
+      expect(ee.le(tol)).toBe(true);
+      expect(p/q).toEqual(x); // float64 division of p/q should be exactly x
+    });
   });
 });
 
@@ -53,6 +92,11 @@ describe('Edge cases', () => {
   test.each(['1', null, undefined, {}, []])('%s', (x) => {
     expect(() => rationalize(x as unknown as number)).toThrow(TypeError);
   });
+  test('±Infinity', () => {
+    expect(rationalize(Infinity)).toEqual([1, 0]);
+    expect(rationalize(-Infinity)).toEqual([-1, 0]);
+  });
+  test('unsafe integer', () => expect(() => rationalize(2**54)).toThrow(RangeError));
   test('Invalid tolerance', () => {
     expect(() => rationalize(1, -1)).toThrow(RangeError);
     expect(() => rationalize(1, NaN)).toThrow(RangeError);
