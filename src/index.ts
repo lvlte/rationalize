@@ -25,10 +25,14 @@ const ceilDiv = (x: number, y: number): number => {
 
 /**
  * Represent a floating point number `x` as a rational number `[p, q]` where
- * `p/q ≈ x` and `|x - p/q| ≤ tol` (the result will differ from x by no more
- * than the given tolerance).
+ * `|x - p/q| ≤ tol` (the result will differ from x by no more than the given
+ * tolerance).
+ *
+ * @param x The input number
+ * @param tol The absolute tolerance (default: eps(x))
+ * @returns A tuple `[p, q]` representing the rational number p/q
  */
-export function rationalize(x: number, tol: number = eps(x)): [number, number] {
+function rationalize(x: number, tol: number = eps(x)): [number, number] {
   if (!Number.isFinite(x)) {
     if (Number.isNaN(x)) {
       throw RangeError(`x must be a valid number (received NaN)`);
@@ -62,7 +66,7 @@ export function rationalize(x: number, tol: number = eps(x)): [number, number] {
   let [q2, q1] = [1, 0]       // [qₙ₋₂, qₙ₋₁]
 
   let [t1, t] = [0, tol];     // [tₙ₋₁, tₙ]
-  let [e1, e, a] = drq(x, 1); // [eₙ₋₁, eₙ, aₙ]
+  let [e1, e, a] = drq(x, 1); // [|eₙ₋₁|, |eₙ|, aₙ]
 
   while (e > t) {
     [p2, p1] = [p1, Int54(p1*a + p2)];
@@ -73,11 +77,10 @@ export function rationalize(x: number, tol: number = eps(x)): [number, number] {
   }
 
   if (a > 1) {
-    // There likely exists a semiconvergent between the last two convergents
-    // that satisfies the tolerance. Find smallest `a` to minimize p and q.
+    // There likely exists a semiconvergent between pₙ₋₁/qₙ₋₁ and pₙ/qₙ that
+    // satisfies the tolerance. Find smallest `a` to minimize p and q.
     const e2 = a*e1 + e;
     const t2 = tol*q2;
-
     a = ceilDiv(e2 - t2, e1 + t1);
   }
 
@@ -86,3 +89,5 @@ export function rationalize(x: number, tol: number = eps(x)): [number, number] {
 
   return [sign*p, q];
 }
+
+export { rationalize, eps };

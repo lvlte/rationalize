@@ -1,5 +1,4 @@
-import { rationalize } from '../src/index';
-import { eps } from '@lvlte/ulp';
+import { rationalize, eps } from '../src/index';
 import { Double } from 'double.js';
 
 function randint(min: number = 0, max: number = 1e+8): number {
