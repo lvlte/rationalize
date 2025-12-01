@@ -1,6 +1,6 @@
 {
   "name": "@lvlte/rationalize",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Represent a floating point number as a rational number",
   "license": "MIT",
   "author": "Eric Lavault <lvlte.code@gmail.com>",
