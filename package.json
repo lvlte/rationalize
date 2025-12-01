@@ -1,7 +1,7 @@
 {
   "name": "@lvlte/rationalize",
   "version": "0.0.0",
-  "description": "",
+  "description": "Represent a floating point number as a rational number",
   "license": "MIT",
   "author": "Eric Lavault <lvlte.code@gmail.com>",
   "repository": {
@@ -35,7 +35,16 @@
     "postbuild": "(echo { && echo   \"type\": \"commonjs\" && echo }) > ./dist/cjs/package.json",
     "prepublishOnly": "npm test && npm run build && tsc --emitDeclarationOnly true --removeComments false && tsc -p tsconfig-cjs.json --emitDeclarationOnly true --removeComments false"
   },
-  "keywords": [],
+  "keywords": [
+    "rational",
+    "number",
+    "fraction",
+    "float64",
+    "integer",
+    "tolerance",
+    "precision",
+    "IEEE754"
+  ],
   "devDependencies": {
     "@lvlte/tsconfig": "^1.1.0",
     "@types/jest": "^29.5.12",
