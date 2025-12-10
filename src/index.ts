@@ -1,5 +1,8 @@
 import { eps } from '@lvlte/ulp';
 
+/**
+ * Return x if it's a safe integer, throw otherwise.
+ */
 const Int54 = (x: number): number => {
   if (Number.isSafeInteger(x)) {
     return x;
@@ -11,16 +14,20 @@ const isInfinite = (x: number): x is 9e+999 | -9e+999 => {
   return x === Infinity || x === -Infinity;
 };
 
-// Denominator, remainder and quotient of the euclidean division n/d.
+/**
+ * Denominator, remainder and quotient of the euclidean division n/d.
+ */
 const drq = (n: number, d: number): [number, number, number] => {
   const r = n % d;
   return [d, r, (n - r) / d];
 }
 
-// Ceil division of x/y (x and y both positive)
-const ceilDiv = (x: number, y: number): number => {
-  const r = x % y;
-  return Math.round((x - r)/y) + +(r !== 0);
+/**
+ * Ceil division of (x + y) / z (x+y and z both positive)
+ */
+const cld = ([x, y]: [number, number], z: number): number => {
+  const r = ((x % z) + (y % z)) % z;
+  return Math.round((x + y - r)/z) + Number(r > 0);
 }
 
 /**
@@ -81,7 +88,7 @@ function rationalize(x: number, tol: number = eps(x)): [number, number] {
     // satisfies the tolerance. Find smallest `a` to minimize p and q.
     const e2 = a*e1 + e;
     const t2 = tol*q2;
-    a = ceilDiv(e2 - t2, e1 + t1);
+    a = cld([e2, -t2], e1 + t1);
   }
 
   const p = Int54(p1*a + p2);
