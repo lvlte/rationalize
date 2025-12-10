@@ -1,6 +1,6 @@
 ## Finding the best rational approximation of a floating-point number, given some tolerance
 
-Let $x$ be the absolute value of a given floating-point number, and $t$ the given tolerance (absolute error tolerated). We seek the best rational approximation $\frac{p}{q}$ for $x$ such that $\left|\frac{p}{q} - x\right| \leq t$.
+Let $x$ be the absolute value of a given finite floating-point number, and $t$ the given tolerance (absolute error tolerated). We seek the best rational approximation $\frac{p}{q}$ for $x$ such that $\left|\frac{p}{q} - x\right| \leq t$.
 
 
 ### Convergents
@@ -13,7 +13,7 @@ $$\begin{align*}
 (p_{-2}, \text{ } p_{-1}) &= (0, \text{ } 1) \\
 (q_{-2}, \text{ } q_{-1}) &= (1, \text{ } 0) \\ \\
 x_0 &= x \\
-a_0 &= ⌊x_0⌋ \\
+a_0 &= \lfloor x_0 \rfloor \\
 r_0 &= x_0 - a_0
 \end{align*}$$
 
@@ -21,7 +21,7 @@ r_0 &= x_0 - a_0
 
 $$\begin{align*}
 x_n &= \frac{1}{r_{n-1}} \\
-a_n &= ⌊x_n⌋ \\
+a_n &= \lfloor x_n \rfloor \\
 r_n &= x_n - a_n
 \end{align*}$$
 
@@ -103,7 +103,7 @@ a = \left\lceil \frac{\left| e_{n-2} \right| - t \cdot q_{n-2}}{\left| e_{n-1} \
 
 ### Floating-point arithmetic and precision issues
 
-[Floating-point operations cannot accurately represent true arithmetic operations](https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems), so implementing the recursive step mentioned above as it is using floating-point arithmetic would be inexact : as the result of $1/r_{n-1}$ is subject to roundoff error, $x_n = \frac{1}{r_{n-1}}$ translates to $x_n ≈ \frac{1}{r_{n-1}}$, and $⌊x_n⌋$ could be off by $\pm 1$ (and thus the value of $a_n$ and $r_n$). For the same reason, the result of the ceil division used to find the smallest $a$ could be off as well, and the comparison between $\left|p_n/q_n - x\right|$ and $t$ might be wrong. In other words, we need to avoid floating-point division roundoff error, or at least be able to measure it.
+[Floating-point operations cannot accurately represent true arithmetic operations](https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems), so implementing the recursive step mentioned above as it is using floating-point arithmetic would be inexact : as the result of $1/r_{n-1}$ is subject to roundoff error, $x_n = \frac{1}{r_{n-1}}$ translates to $x_n \approx \frac{1}{r_{n-1}}$, and $\lfloor x_n \rfloor$ could be off by $\pm 1$ (and thus the value of $a_n$ and $r_n$). For the same reason, the result of the ceil division used to find the smallest $a$ could be off as well, and the comparison between $\left|p_n/q_n - x\right|$ and $t$ might be wrong. In other words, we need to avoid floating-point division roundoff error, or at least be able to measure it.
 
 There are two options to address this :
 - use twice the precision of $x$ to represent the involved variables and for every operations (using Veltkamp/Dekker algorithms if $x$ cannot be represented with a higher precision number type in the language used for the implementation).
@@ -168,7 +168,7 @@ where $rem(x, y)$ is a remainder function that takes the sign of $x$, for exampl
 
 - C : `fmod(x, y)`
 - JavaScript : `x % y`
-- Julia: `x % y`, `rem(x, y)`
+- Julia: `x % y`, `rem(x, y, RoundToZero)`
 - Python: `math.fmod(x, y)` (`%` operator is fine if working with absolute values for $e_n$)
 
 <br>
