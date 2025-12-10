@@ -6,7 +6,7 @@
   "author": "Eric Lavault <lvlte.code@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lvlte/rationalize"
+    "url": "git+https://github.com/lvlte/rationalize.git"
   },
   "type": "module",
   "main": "./dist/cjs/index.js",
@@ -56,6 +56,6 @@
     "double.js": "^1.1.0"
   },
   "dependencies": {
-    "@lvlte/ulp": "^1.1.0"
+    "@lvlte/ulp": "^1.1.1"
   }
 }
