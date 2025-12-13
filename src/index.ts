@@ -46,6 +46,22 @@ function mod(x: number, y: number) {
   return ((x % y) + y) % y;
 }
 
+const F64_VIEW = new DataView(new ArrayBuffer(8));
+
+/**
+ * Truncates the `nb` least significant bits of a Float64 (`nb` must be less
+ * than or equal to 31).
+ */
+function truncbits(x: number, nb: number): number {
+  // Reinterpret lo bits of x (32 least significant bits) as a 32 bits integer,
+  // apply truncmask to it and write it back in the float64 buffer.
+  F64_VIEW.setFloat64(0, x, true);
+  const truncmask_i32 = -1 << nb; // all 32 bits set, left-shifted by nb bits.
+  const x_lo = F64_VIEW.getInt32(0, true) & truncmask_i32;
+  F64_VIEW.setInt32(0, x_lo, true);
+  return F64_VIEW.getFloat64(0, true);
+}
+
 /**
  * Represent a floating point number `x` as a rational number `[p, q]` where
  * `|x - p/q| ≤ tol` (the result will differ from x by no more than the given
@@ -84,6 +100,9 @@ function rationalize(x: number, tol: number = eps(x)): [number, number] {
       return [sign*0, 1];
     }
 
+    // Ensure `tol` has at least 4 bits "free" for later calculations to prevent
+    // roundoff issues.
+    tol = truncbits(tol, 4);
     epsX = eps(x);
   }
 
