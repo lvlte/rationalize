@@ -1,6 +1,6 @@
 # rationalize
 
-![Julia Logo](https://avatars.githubusercontent.com/u/743164?s=8&v=4) _Inspired by Julia's [rationalize](https://docs.julialang.org/en/v1/base/math/#Base.rationalize)_ ![Julia Logo](https://avatars.githubusercontent.com/u/743164?s=8&v=4)
+[![](https://avatars.githubusercontent.com/u/743164?s=12&v=4)](#) _Inspired by Julia's [rationalize](https://docs.julialang.org/en/v1/base/math/#Base.rationalize)_ [![](https://avatars.githubusercontent.com/u/743164?s=12&v=4)](#)
 
 > Represent a floating point number `x` as a rational number `[p, q]` where
 > `|x - p/q| ≤ tol` (the result will differ from x by no more than the given
