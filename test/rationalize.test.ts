@@ -38,7 +38,7 @@ const random = (function () {
 })();
 
 const randomX: number[] = [];
-const numPerExp = 150;
+const numPerExp = 500;
 const nbits = 53;
 let exp = -nbits;
 

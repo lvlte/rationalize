@@ -42,8 +42,15 @@ const cld2 = ([x, y]: [number, number], z: number): number => {
  * Remainder of x after floor division by y (modulo reduction).
  * Equivalent to `x - y*⌊x/y⌋` without intermediate rounding.
  */
-function mod(x: number, y: number) {
-  return ((x % y) + y) % y;
+function mod(x: number, y: number): number {
+  const r = x % y;
+  if (r === 0) {
+    return Math.sign(y)*0;
+  }
+  if (r > 0 != y > 0) {
+    return r + y;
+  }
+  return r;
 }
 
 const F64_VIEW = new DataView(new ArrayBuffer(8));
