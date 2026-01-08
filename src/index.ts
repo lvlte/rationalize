@@ -23,19 +23,17 @@ const drq = (n: number, d: number): [number, number, number] => {
 }
 
 /**
- * Ceil division of x / y (x and y both positive)
+ * Ceil division of x / y
  */
-const cld = (x: number, y: number): number => {
-  const r = x % y;
-  return Math.round((x - r)/y) + Number(r > 0);
-}
+const cld = (x: number, y: number): number => Math.round(x/y - mod(x, -y)/y);
 
 /**
- * Ceil division of (x + y) / z (x+y and z both positive)
+ * Ceil division of (x + y) / z
+ * for x,y,z such that x > 0, y ≤ 0, x+y > 0, z > 0
  */
 const cld2 = ([x, y]: [number, number], z: number): number => {
   const r = ((x % z) + (y % z)) % z;
-  return Math.round((x + y - r)/z) + Number(r > 0);
+  return Math.round((x + (y - r))/z) + Number(r > 0);
 }
 
 /**
