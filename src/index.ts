@@ -29,10 +29,10 @@ const cld = (x: number, y: number): number => Math.round(x/y - mod(x, -y)/y);
 
 /**
  * Ceil division of (x + y) / z
- * for x,y,z such that x > 0, y ≤ 0, x+y > 0, z > 0
+ * for x,y,z such that x > 0, y ≤ 0, and 0 < z ≤ x+y
  */
 const cld2 = ([x, y]: [number, number], z: number): number => {
-  const r = ((x % z) + (y % z)) % z;
+  const r = x % z + y % z;
   return Math.round((x + (y - r))/z) + Number(r > 0);
 }
 
