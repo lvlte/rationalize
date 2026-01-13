@@ -119,8 +119,6 @@ function rationalize(x: number, tol: number = eps(x)): [number, number] {
   // representation of x.
   // @see https://github.com/lvlte/rationalize/blob/main/rationale.md
 
-  let n = 0;                  // convergent index
-
   let [p2, p1] = [0, 1]       // [pₙ₋₂, pₙ₋₁]
   let [q2, q1] = [1, 0]       // [qₙ₋₂, qₙ₋₁]
 
@@ -128,7 +126,6 @@ function rationalize(x: number, tol: number = eps(x)): [number, number] {
   let [e1, e, a] = drq(x, 1); // [|eₙ₋₁|, |eₙ|, aₙ]
 
   while (e > t) {
-    n++;
     [p2, p1] = [p1, Int54(p1*a + p2)];
     [q2, q1] = [q1, Int54(q1*a + q2)];
 
@@ -136,10 +133,10 @@ function rationalize(x: number, tol: number = eps(x)): [number, number] {
     [t1, t] = [t, a*t + t1];
   }
 
-  // Having n=0 at this point means tol is greater than the fractional part of x
-  // and the current value of a is ⌊1/x⌋, which is fine given that tol.
+  // Having e1=1 at this point means tol is greater than the fractional part of
+  // x and the current value of a is ⌊1/x⌋, which is fine given that tol.
 
-  if (n > 0 && a > 1) {
+  if (e1 < 1 && a > 1) {
     // There likely exists a semiconvergent between pₙ₋₁/qₙ₋₁ and pₙ/qₙ that
     // satisfies the tolerance. Find smallest `a` to minimize p and q.
 
