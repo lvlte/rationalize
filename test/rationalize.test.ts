@@ -198,12 +198,10 @@ describe('Edge cases', () => {
     expect(rationalize(-Math.PI, Math.PI)).toEqual([-0, 1]);
   });
   test('tol = 1', () => {
-    [Math.PI, 1/12, 17/11, 134217728.125, ].forEach(x => {
+    [Math.PI, 1/12, 17/11, 134217728.125].forEach(x => {
       expect(rationalize(x, 1)).toEqual([Math.trunc(x), 1]);
       expect(rationalize(-x, 1)).toEqual([Math.trunc(-x), 1]);
     });
-    expect(rationalize(Math.PI, 1)).toEqual([3, 1]);
-    expect(rationalize(-Math.PI, 1)).toEqual([-3, 1]);
   });
   test('tol = 0', () => {
     expect(rationalize(0.25, 0)).toEqual([1, 4]);
