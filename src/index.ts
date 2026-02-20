@@ -93,7 +93,6 @@ function rationalize(x: number, tol: number = eps(x)): [number, number] {
   const sign = Math.sign(x);
   x = Math.abs(x);
 
-  let epsX = tol;
   if (arguments[1] !== undefined) {
     // Custom tolerance is given
     if (!(typeof tol === 'number' && tol >= 0)) {
@@ -108,7 +107,6 @@ function rationalize(x: number, tol: number = eps(x)): [number, number] {
     // Ensure `tol` has at least 4 bits "free" for later calculations to prevent
     // roundoff issues.
     tol = truncbits(tol, 4);
-    epsX = eps(x);
   }
 
   if (Number.isInteger(x)) {
@@ -136,15 +134,15 @@ function rationalize(x: number, tol: number = eps(x)): [number, number] {
   // Having e1=1 at this point means tol is greater than the fractional part of
   // x and the current value of a is ⌊1/x⌋, which is fine given that tol.
 
-  if (e1 < 1 && a > 1) {
+  if (tol > 0 && e1 < 1 && a > 1) {
     // There likely exists a semiconvergent between pₙ₋₁/qₙ₋₁ and pₙ/qₙ that
     // satisfies the tolerance. Find smallest `a` to minimize p and q.
-
     if (p1 === 0) {
       // We got an inverse 1/q : in this situation the difference of magnitude
       // between e1 and t1 is still very high and the floating-point addition
       // e1 + t1 is not accurate enough.
-      if (t1 < epsX || t1 === epsX && a < Number.MAX_SAFE_INTEGER) {
+      const epsX = eps(x);
+      if (t1 < epsX) {
         // We actually don't want to minimize `a` in this case. Since we have a
         // candidate [p, q] = [1, a] with a = ⌊1/x⌋, satisfying the tolerance, we
         // left `a` untouched except if the ceil div remainder is smaller than
@@ -153,7 +151,7 @@ function rationalize(x: number, tol: number = eps(x)): [number, number] {
       }
       else {
         // Prevent over-minimization.
-        const t = t1 <= epsX*2 ? epsX : t1;
+        const t = t1 <= epsX*2 ? epsX : t1/2;
         a = Math.min(a, cld(1, e1 + t));
       }
     }
