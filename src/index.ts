@@ -142,7 +142,7 @@ function rationalize(x: number, tol: number = eps(x)): [number, number] {
       // between e1 and t1 is still very high and the floating-point addition
       // e1 + t1 is not accurate enough.
       const epsX = eps(x);
-      if (t1 < epsX) {
+      if (t1 < epsX || t1 === epsX && a < Number.MAX_SAFE_INTEGER) {
         // We actually don't want to minimize `a` in this case. Since we have a
         // candidate [p, q] = [1, a] with a = ⌊1/x⌋, satisfying the tolerance, we
         // left `a` untouched except if the ceil div remainder is smaller than
