@@ -19,7 +19,7 @@ const isInfinite = (x: number): x is 9e+999 | -9e+999 => {
  */
 const drq = (n: number, d: number): [number, number, number] => {
   const r = n % d;
-  return [d, r, (n - r) / d];
+  return [d, r, Math.round(n/d - r/d)];
 }
 
 /**
