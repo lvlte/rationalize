@@ -1,0 +1,13 @@
+{
+  "extends": "@lvlte/tsconfig",
+  "include": ["./"],
+  "compilerOptions": {
+    "rootDir": "../",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "target": "esnext",
+    "lib": ["esnext"],
+    "declaration": false,
+    "noEmit": true
+  }
+}

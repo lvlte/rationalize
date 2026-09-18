@@ -1,4 +1,4 @@
-import { rationalize, eps } from '../src/index';
+import { rationalize, eps } from '../src/index.js';
 import { exponent } from '@lvlte/ulp';
 import { Double } from 'double.js';
 
