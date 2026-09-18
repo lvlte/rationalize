@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "esnext",
+    "lib": ["esnext"],
+    "skipLibCheck": true,
+    "types": ["node", "jest"],
+    "isolatedModules": true,
+    "noEmit": true
+  }
+}
+
+// NB. With "module": "NodeNext" or anything other than ESxxxx, ts-jest (29.4.12)
+// will throw "Must use import to load ES Module", even with "isolatedModules",
+// which was only a workaround for version 29.2.5 (and maybe other versions but
+// not 29.4.12 with nodenext).
+// The error also varies depending on "verbatimModuleSyntax".
+// Actually it just doesn't take package "type": "module" into account (jest issue).
