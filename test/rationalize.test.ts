@@ -1,6 +1,7 @@
+import {describe, expect, test} from '@jest/globals';
 import { rationalize, eps } from '../src/index.js';
 import { exponent } from '@lvlte/ulp';
-import { Double } from 'double.js';
+import { abs, div, le, sub } from 'twofloat';
 
 /**
  * Given the Farey pair a/b, c/d in the Farey sequence of order N, returns the
@@ -56,8 +57,8 @@ do {
 // Generic test function
 function rationalizeTest(x: number, tol: number = eps(x), f64DivEq: boolean = false, d?: number) {
   const [p, q] = rationalize(x, tol);
-  const ee = new Double(p).div(q).sub(x).abs();
-  expect(ee.le(tol)).toBe(true); // |x - p/q| ≤ tol holds mathematically
+  const ee = abs(sub(div(p, q), x));
+  expect(le(ee, tol)).toBe(true); // |x - p/q| ≤ tol holds mathematically
   // expect([x, p, q, ee.le(tol)]).toEqual([x, p, q, true]); // debug
   if (f64DivEq) {
     // float64 division of p/q should be exactly x (when tol <= eps(x)/2)
