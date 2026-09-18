@@ -31,9 +31,9 @@
   "scripts": {
     "test": "jest --verbose",
     "prebuild": "rm -Rf dist && mkdir dist",
-    "build": "tsc && tsc -p tsconfig-cjs.json",
-    "postbuild": "(echo { && echo   \"type\": \"commonjs\" && echo }) > ./dist/cjs/package.json",
-    "prepublishOnly": "npm test && npm run build && tsc --emitDeclarationOnly true --removeComments false && tsc -p tsconfig-cjs.json --emitDeclarationOnly true --removeComments false"
+    "build": "tsdown",
+    "postbuild": "(echo { \"type\": \"commonjs\" }) > ./dist/cjs/package.json",
+    "prepublishOnly": "npm test && npm run build"
   },
   "keywords": [
     "rational",
@@ -51,6 +51,7 @@
     "@types/node": "^26.5.1",
     "jest": "^30.5.1",
     "ts-jest": "^29.4.12",
+    "tsdown": "^0.23.0",
     "twofloat": "^0.3.1",
     "typescript": "^6.0.3"
   },
