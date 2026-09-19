@@ -8,13 +8,16 @@
     "type": "git",
     "url": "git+https://github.com/lvlte/rationalize.git"
   },
+  "bugs": {
+    "url": "https://github.com/lvlte/rationalize/issues"
+  },
   "type": "module",
   "main": "./dist/cjs/index.js",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
       },
       "require": {
         "types": "./dist/cjs/index.d.ts",
@@ -22,6 +25,8 @@
       }
     }
   },
+  "unpkg": "./dist/umd/rationalize.min.js",
+  "jsdelivr": "./dist/umd/rationalize.js",
   "engines": {
     "node": ">=18.20"
   },
@@ -43,7 +48,8 @@
     "integer",
     "tolerance",
     "precision",
-    "IEEE754"
+    "IEEE 754",
+    "math"
   ],
   "devDependencies": {
     "@lvlte/tsconfig": "^1.2.1",
