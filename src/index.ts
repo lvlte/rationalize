@@ -73,8 +73,8 @@ function truncbits(x: number, nb: number): number {
  * tolerance).
  *
  * @param x The input number
- * @param tol The absolute tolerance (default: eps(x))
- * @returns A tuple `[p, q]` representing the rational number p/q
+ * @param tol The absolute tolerance (default: `eps(x)`)
+ * @returns A tuple `[p, q]` representing the rational number `p/q`
  */
 function rationalize(x: number, tol: number = eps(x)): [number, number] {
   if (!Number.isFinite(x)) {
@@ -111,6 +111,13 @@ function rationalize(x: number, tol: number = eps(x)): [number, number] {
 
   if (Number.isInteger(x)) {
     return [sign*Int54(x), 1];
+  }
+
+  if (tol === 0) {
+    const k = x.toString(2).split('.')[1].length;
+    const q = Int54(2**k);
+    const p = Int54(x*q);
+    return [sign*p, q];
   }
 
   // Compute [p, q] as the convergents of the regular continued fraction
