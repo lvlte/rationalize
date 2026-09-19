@@ -16,17 +16,19 @@ function rationalize(x: number, tol: number = eps(x)): [number, number]
 npm install @lvlte/rationalize
 ```
 
+Or load from a CDN:
+
+- [jsdelivr](https://www.jsdelivr.com/package/npm/@lvlte/rationalize)
+- [unpkg](https://unpkg.com)
+- [esm.sh](https://esm.sh/#docs)
+
 ## Usage
 
 ```js
-// ESM
 import { rationalize } from '@lvlte/rationalize';
-```
-```js
-// CJS
-const { rationalize } = require('@lvlte/rationalize');
-```
-```js
+// NB. You can also use CJS:
+// const { rationalize } = require('@lvlte/rationalize');
+
 const [p1, q1] = rationalize(0.1);            // [1, 10]
 const [p2, q2] = rationalize(Math.PI);        // [165707065, 52746197]
 const [p3, q3] = rationalize(Math.PI, 0.01);  // [22, 7]
