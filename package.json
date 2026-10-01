@@ -34,6 +34,8 @@
     "dist"
   ],
   "scripts": {
+    "tscheck": "tsc --noEmit && tsc -p ./test/tsconfig.json",
+    "pretest": "npm run tscheck",
     "test": "jest --verbose",
     "prebuild": "rm -Rf dist && mkdir dist",
     "build": "tsdown",
