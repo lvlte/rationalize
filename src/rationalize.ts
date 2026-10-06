@@ -1,5 +1,5 @@
 import { eps } from '@lvlte/ulp';
-import { cld, cld2, drq, Int54, isInfinite, mod, truncbits } from './utils.js';
+import { cld, cld2, drq, dyadicRational, Int54, isInfinite, mod, truncbits } from './utils.js';
 
 /**
  * Represent a floating point number `x` as a rational number `[p, q]` where
@@ -27,6 +27,7 @@ function rationalize(x: number, tol: number = eps(x)): [number, number] {
   const sign = Math.sign(x);
   x = Math.abs(x);
 
+  let epsX: number | undefined;
   if (arguments[1] !== undefined) {
     // Custom tolerance is given
     if (!(typeof tol === 'number' && tol >= 0)) {
@@ -42,24 +43,25 @@ function rationalize(x: number, tol: number = eps(x)): [number, number] {
     // roundoff issues.
     tol = truncbits(tol, 4);
   }
+  else {
+    epsX = tol;
+  }
 
   if (Number.isInteger(x)) {
     return [sign*Int54(x), 1];
   }
 
   if (tol === 0) {
-    const k = x.toString(2).split('.')[1].length;
-    const q = Int54(2**k);
-    const p = Int54(x*q);
-    return [sign*p, q];
+    const [p, q] = dyadicRational(x);
+    return [sign*Int54(p), Int54(q)];
   }
 
   // Compute [p, q] as the convergents of the regular continued fraction
   // representation of x.
   // @see https://github.com/lvlte/rationalize/blob/main/rationale.md
 
-  let [p2, p1] = [0, 1]       // [pₙ₋₂, pₙ₋₁]
-  let [q2, q1] = [1, 0]       // [qₙ₋₂, qₙ₋₁]
+  let [p2, p1] = [0, 1];      // [pₙ₋₂, pₙ₋₁]
+  let [q2, q1] = [1, 0];      // [qₙ₋₂, qₙ₋₁]
 
   let [t1, t] = [0, tol];     // [tₙ₋₁, tₙ]
   let [e1, e, a] = drq(x, 1); // [|eₙ₋₁|, |eₙ|, aₙ]
@@ -75,14 +77,14 @@ function rationalize(x: number, tol: number = eps(x)): [number, number] {
   // Having e1=1 at this point means tol is greater than the fractional part of
   // x and the current value of a is ⌊1/x⌋, which is fine given that tol.
 
-  if (tol > 0 && e1 < 1 && a > 1) {
+  if (e1 < 1 && a > 1) {
     // There likely exists a semiconvergent between pₙ₋₁/qₙ₋₁ and pₙ/qₙ that
     // satisfies the tolerance. Find smallest `a` to minimize p and q.
     if (p1 === 0) {
       // We got an inverse 1/q : in this situation the difference of magnitude
       // between e1 and t1 is still very high and the floating-point addition
       // e1 + t1 is not accurate enough.
-      const epsX = eps(x);
+      epsX = epsX ?? eps(x);
       if (t1 < epsX || t1 === epsX && a < Number.MAX_SAFE_INTEGER) {
         // We actually don't want to minimize `a` in this case. Since we have a
         // candidate [p, q] = [1, a] with a = ⌊1/x⌋, satisfying the tolerance, we
@@ -92,8 +94,8 @@ function rationalize(x: number, tol: number = eps(x)): [number, number] {
       }
       else {
         // Prevent over-minimization.
-        const t = t1 <= epsX*2 ? epsX : t1/2;
-        a = Math.min(a, cld(1, e1 + t));
+        t1 = t1 <= epsX*2 ? epsX : t1/2;
+        a = Math.min(a, cld(1, e1 + t1));
       }
     }
     else {

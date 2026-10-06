@@ -1,3 +1,5 @@
+import { FLOAT64_EMAX } from '@lvlte/ulp';
+
 /**
  * Return x if it's a safe integer, throw otherwise.
  */
@@ -63,4 +65,26 @@ export function truncbits(x: number, nb: number): number {
   const x_lo = F64_VIEW.getInt32(0, true) & truncmask_i32;
   F64_VIEW.setInt32(0, x_lo, true);
   return F64_VIEW.getFloat64(0, true);
+}
+
+/**
+ * Returns the dyadic rational representation of `x` (error-free transform).
+ *
+ * If `x` is non-finite (`NaN` or `±Infinity`), return `[x, 1]`.
+ *
+ * NB. Subnormal numbers such that `|x| < 2^-1023` cannot be represented exactly
+ * using the `number` type (f64) as their denominator overflows to `Infinity`.
+ */
+export function dyadicRational(x: number): [number, number] {
+  const k = x.toString(2).split('.')[1]?.length ?? 0;
+
+  if (k > FLOAT64_EMAX) {
+    const m = k - FLOAT64_EMAX;
+    return [x * 2**FLOAT64_EMAX * 2**m, Infinity];
+  }
+
+  const q = 2**k;
+  const p = x*q;
+
+  return [p, q];
 }
