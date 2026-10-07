@@ -10,17 +10,13 @@ export const Int54 = (x: number): number => {
   throw RangeError(`${x} is not a safe integer`);
 };
 
-export const isInfinite = (x: number): x is 9e+999 | -9e+999 => {
-  return x === Infinity || x === -Infinity;
-};
-
 /**
  * Denominator, remainder and quotient of the euclidean division n/d.
  */
 export const drq = (n: number, d: number): [number, number, number] => {
   const r = n % d;
   return [d, r, Math.round(n/d - r/d)];
-}
+};
 
 /**
  * Ceil division of x / y
@@ -34,7 +30,7 @@ export const cld = (x: number, y: number): number => Math.round(x/y - mod(x, -y)
 export const cld2 = ([x, y]: [number, number], z: number): number => {
   const r = x % z + y % z;
   return Math.round((x + (y - r))/z) + Number(r > 0);
-}
+};
 
 /**
  * Remainder of x after floor division by y (modulo reduction).
@@ -45,10 +41,7 @@ export function mod(x: number, y: number): number {
   if (r === 0) {
     return Math.sign(y)*0;
   }
-  if (r > 0 != y > 0) {
-    return r + y;
-  }
-  return r;
+  return (r > 0) === (y > 0) ? r : r + y;
 }
 
 const F64_VIEW = new DataView(new ArrayBuffer(8));

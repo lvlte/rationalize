@@ -1,5 +1,5 @@
 import { eps } from '@lvlte/ulp';
-import { cld, cld2, drq, dyadicRational, Int54, isInfinite, mod, truncbits } from './utils.js';
+import { cld, cld2, drq, dyadicRational, Int54, mod, truncbits } from './utils.js';
 
 /**
  * Represent a floating point number `x` as a rational number `[p, q]` where
@@ -13,9 +13,9 @@ import { cld, cld2, drq, dyadicRational, Int54, isInfinite, mod, truncbits } fro
 function rationalize(x: number, tol: number = eps(x)): [number, number] {
   if (!Number.isFinite(x)) {
     if (Number.isNaN(x)) {
-      throw RangeError(`x must be a valid number (received NaN)`);
+      throw RangeError('x must be a valid number (received NaN)');
     }
-    if (isInfinite(x)) {
+    if (Math.abs(x) === Infinity) {
       // ±Infinity is not a rational number obviously but we can represent it as
       // [±1, 0] (since float64 allows division by zero, and ±1/0 = ±Infinity),
       // which allows to carry it on through rational computations.
@@ -32,7 +32,7 @@ function rationalize(x: number, tol: number = eps(x)): [number, number] {
     // Custom tolerance is given
     if (!(typeof tol === 'number' && tol >= 0)) {
       const Err = typeof tol === 'number' ? RangeError : TypeError;
-      throw Err(`Tolerance must be a non-negative number`);
+      throw Err('Tolerance must be a non-negative number');
     }
 
     if (x <= tol) {
@@ -84,7 +84,7 @@ function rationalize(x: number, tol: number = eps(x)): [number, number] {
       // We got an inverse 1/q : in this situation the difference of magnitude
       // between e1 and t1 is still very high and the floating-point addition
       // e1 + t1 is not accurate enough.
-      epsX = epsX ?? eps(x);
+      epsX ??= eps(x);
       if (t1 < epsX || t1 === epsX && a < Number.MAX_SAFE_INTEGER) {
         // We actually don't want to minimize `a` in this case. Since we have a
         // candidate [p, q] = [1, a] with a = ⌊1/x⌋, satisfying the tolerance, we

@@ -1,4 +1,4 @@
-/// <reference lib="es2020.bigint" />
+/// <reference lib='es2020.bigint' />
 
 import { FLOAT64_EMAX } from '@lvlte/ulp';
 import { mod } from './utils.js';
