@@ -1,13 +1,12 @@
 # rationalize
 
-[![](https://avatars.githubusercontent.com/u/743164?s=12&v=4)](#) _Inspired by Julia's [rationalize](https://docs.julialang.org/en/v1/base/math/#Base.rationalize)_ [![](https://avatars.githubusercontent.com/u/743164?s=12&v=4)](#)
-
 > Represent a floating point number `x` as a rational number `[p, q]` where
 > `|x - p/q| ≤ tol` (the result will differ from x by no more than the given
 > tolerance).
 
 ```ts
 function rationalize(x: number, tol: number = eps(x)): [number, number]
+function rationalizeBig(x: number, tol: number = eps(x)): [bigint, bigint]
 ```
 
 ## Install
@@ -24,7 +23,7 @@ Or load from a CDN:
 
 ## Usage
 
-```js
+```ts
 import { rationalize } from '@lvlte/rationalize';
 // NB. You can also use CJS:
 // const { rationalize } = require('@lvlte/rationalize');
@@ -40,14 +39,22 @@ const [p5, q5] = rationalize(-0);             // [-0, 1]
 
 ## Safe Integers
 
-The output ratio's components are guaranteed to be safe integers (float64
-integers in the range `[-2^53 + 1, +2^53 - 1]`). In case one of
-the component goes out of this range, a `RangeError` is thrown, which does not
-happen as long as the tolerance is set to a value greater than or equal to
-`eps(x)` (default). The exception to this rule concerns absolute values of `x`
-less than `1/(2^53 - 1)` or greater than `2^53 - 1`. To rationalize these
-tiny/huge numbers with the best precision, the numerator and denominator needs
-to be represented with `bigint` (coming soon).
+- `rationalize`: The output ratio's components are guaranteed to be [safe Float64
+integers](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger#description) (in the range `[-2^53 + 1, +2^53 - 1]`) as long as `|x|`
+is in the range `[1/(2^53 - 1), 2^53 - 1]` and `tol ≥ eps(x)` (see [Tolerance](#tolerance)).
+Otherwise, if one of the component cannot be represented as a safe integer, the
+function throws a `RangeError`.
+- `rationalizeBig` has no restriction on its output range since it returns a
+tuple of `bigint`, it can represent tiny/huge numbers with arbitrary precision
+regardless of the given tolerance.
+
+```ts
+import { rationalize, rationalizeBig } from '@lvlte/rationalize';
+
+const x = 4.613769870922415e-18;
+const [pF64, qF64] = rationalize(x);    // RangeError: 216742496478280860 is not a safe integer
+const [pInt, qInt] = rationalizeBig(x); // [1n, 216742496478280893n]
+```
 
 ## Tolerance
 
