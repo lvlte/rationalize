@@ -27,6 +27,7 @@ const __dirname = path.dirname(__filename);
 const durations = {
   [path.resolve(__dirname, '../test/fractions.test.ts')]: 200_000,
   [path.resolve(__dirname, '../test/random.test.ts')]: 20_000,
+  [path.resolve(__dirname, '../test/big.test.ts')]: 200_000,
 };
 
 async function seedCache() {
