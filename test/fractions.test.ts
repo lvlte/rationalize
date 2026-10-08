@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 import { rationalize, eps } from '../src/index.js';
-import { abs, div, le, sub } from 'twofloat';
+import { rationalizeTest } from './utils.js';
 
 /**
  * Given the Farey pair a/b, c/d in the Farey sequence of order N, returns the
@@ -27,22 +27,6 @@ do {
     fareyInverses.push([d/c, d, c]);
   }
 } while (d !== 1);
-
-// Generic test function
-function rationalizeTest(x: number, tol: number = eps(x), f64DivEq: boolean = false, d?: number) {
-  const [p, q] = rationalize(x, tol);
-  const ee = abs(sub(div(p, q), x));
-  expect(le(ee, tol)).toBe(true); // |x - p/q| ≤ tol holds mathematically
-  // expect([x, p, q, ee.le(tol)]).toEqual([x, p, q, true]); // debug
-  if (f64DivEq) {
-    // float64 division of p/q should be exactly x (when tol <= eps(x)/2)
-    expect(p/q).toEqual(x);
-  }
-  else if (d !== undefined) {
-    // q should be minimized.
-    tol > 1/d && d > 1 ? expect(q).toBeLessThan(d) : expect(q).toBeLessThanOrEqual(d);
-  }
-}
 
 // Generic test function for Farey fractions
 function rationalizeTestFarey(x: number, [n, d]: [number, number], tol: number = eps(x)) {

@@ -1,8 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 import { rationalize, eps } from '../src/index.js';
-import { abs, div, le, sub } from 'twofloat';
 import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
-import { randomFn, randomSign } from './utils.js';
+import { randomFn, randomSign, rationalizeTest } from './utils.js';
 
 // Generate pseudo-random numbers evenly spread in the float64 range 2^±53.
 const rng = xoroshiro128plus(1234);
@@ -21,22 +20,6 @@ do {
     }
   }
 } while (++exp < emax);
-
-// Generic test function
-function rationalizeTest(x: number, tol: number = eps(x), f64DivEq: boolean = false, d?: number) {
-  const [p, q] = rationalize(x, tol);
-  const ee = abs(sub(div(p, q), x));
-  expect(le(ee, tol)).toBe(true); // |x - p/q| ≤ tol holds mathematically
-  // expect([x, p, q, ee.le(tol)]).toEqual([x, p, q, true]); // debug
-  if (f64DivEq) {
-    // float64 division of p/q should be exactly x (when tol <= eps(x)/2)
-    expect(p/q).toEqual(x);
-  }
-  else if (d !== undefined) {
-    // q should be minimized.
-    tol > 1/d && d > 1 ? expect(q).toBeLessThan(d) : expect(q).toBeLessThanOrEqual(d);
-  }
-}
 
 describe(`Given a random number x in the range [2^-53, 2^+53) (${randomX.length} numbers tested)`, () => {
   describe(`rationalize(x) should return [p, q] such that |x - p/q| ≤ tol`, () => {
