@@ -59,6 +59,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^26.5.1",
     "jest": "^30.5.1",
+    "pure-rand": "^8.4.2",
     "ts-jest": "^29.4.12",
     "tsdown": "^0.23.0",
     "twofloat": "^0.3.1",

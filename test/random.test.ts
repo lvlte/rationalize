@@ -1,28 +1,21 @@
 import { describe, expect, test } from '@jest/globals';
 import { rationalize, eps } from '../src/index.js';
-import { exponent } from '@lvlte/ulp';
 import { abs, div, le, sub } from 'twofloat';
-
-const randomX: number[] = [];
+import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
+import { randomFn, randomSign } from './utils.js';
 
 // Generate pseudo-random numbers evenly spread in the float64 range 2^±53.
-const SEED = Math.sqrt(2);
+const rng = xoroshiro128plus(1234);
+const random = randomFn(rng, true);
+
+const randomX: number[] = [];
 const numPerExp = 500;
 const [emin, emax] = [-53, 50];
 let exp = emin;
 
-const random = (function () {
-  let n = SEED;
-  return function(): number {
-    return Math.sin(n++);
-  }
-})();
-
 do {
   for (let i=0; i<numPerExp; i++) {
-    const s = random();
-    const p = exp - exponent(s);
-    const x = s * 2**p;
+    const x = random(exp, randomSign(0.6));
     if (!Number.isInteger(x)) {
       randomX.push(x);
     }

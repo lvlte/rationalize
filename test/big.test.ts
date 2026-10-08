@@ -1,29 +1,22 @@
 import { describe, expect, test } from '@jest/globals';
-import { exponent, eps } from '@lvlte/ulp';
-import { rationalizeBig } from '../src/rationalize-big.js';
+import { rationalizeBig, eps } from '../src/index.js';
 import { abs, le, sub, type TwoF64 } from 'twofloat';
 import { dyadicRationalBig } from '../src/utils-big.js';
-
-const randomX: number[] = [];
+import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
+import { randomFn, randomSign } from './utils.js';
 
 // Generate pseudo-random numbers evenly spread in the float64 range 2^±53.
-const SEED = Math.sqrt(2);
-const numPerExp = 500;
-const [emin, emax] = [-1024, 53];
-let exp = emin;
+const rng = xoroshiro128plus(42);
+const random = randomFn(rng, true);
 
-const random = (function () {
-  let n = SEED;
-  return function(): number {
-    return Math.sin(n++);
-  }
-})();
+const randomX: number[] = [];
+const numPerExp = 500;
+const [emin, emax] = [-1024, 50];
+let exp = emin;
 
 do {
   for (let i=0; i<numPerExp; i++) {
-    const s = random();
-    const p = exp - exponent(s);
-    const x = s * 2**p;
+    const x = random(exp, randomSign(0.6));
     if (!Number.isInteger(x)) {
       randomX.push(x);
     }
@@ -36,7 +29,6 @@ function rationalizeTest(x: number, tol: number = eps(x), f64DivEq: boolean = fa
   const pq = rationalToTwoF64(p, q);
   const ee = abs(sub(pq, x));
   expect(le(ee, tol)).toBe(true); // |x - p/q| ≤ tol holds mathematically
-  // expect([x, tol, p,q, pq[0], ee[0], le(ee, tol)]).toEqual([x, tol, p,q, pq[0], ee[0], true]); // debug
   if (f64DivEq) {
     // float64 division of p/q should be exactly x (when tol <= eps(x)/2)
     expect(pq[0]).toEqual(x);
